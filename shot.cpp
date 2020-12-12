@@ -29,7 +29,7 @@ void Shot::setY(float value) {
 void Shot::setAngle(int value) {
     angle = value;
 }
-void Shot::setF_time(float value) {
+void Shot::setF_time(int value) {
     f_time = value;
 }
 void Shot::setV0(int value) {
@@ -47,7 +47,7 @@ float Shot::getY() const {
 int Shot::getAngle() const {
     return angle;
 }
-float Shot::getF_time() const {
+int Shot::getF_time() const {
     return f_time;
 }
 int Shot::getV0() const {

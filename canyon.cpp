@@ -13,13 +13,13 @@ std::vector<Shot *> Canyon::generate_offensive_shots(Canyon target) {
     std::vector<Shot *> aux;
 
     int flag = 0; //para romper los ciclos cuando haye los 3 disparos
-    float x,y; //posicion del proyectil
-    float Vx,Vy; //velocidades en x y y del proyectil
+    float x, y; //posicion del proyectil
+    float Vx, Vy; //velocidades en x y y del proyectil
     int V0 = 0; //velocidad inicial del proyectil
-    float t = 0;
+    int t = 0;
     int angle = 0; //angulo del proyectil
 
-    for(V0 = 5; ; V0 += 5){ //se va aumentando la velocida de 5 en 5
+    for(V0 = 5; ; V0 += 5){ //se va aumentando la velocidad de 5 en 5
 
         for(angle = 0; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
 
@@ -37,8 +37,7 @@ std::vector<Shot *> Canyon::generate_offensive_shots(Canyon target) {
 
             for(t = 0; ; t++){ // se aumenta el tiempo de segundo en segundo
 
-                //x = posx + Vx*t; //como no he visto fisica no estoy seguro de esto :)
-                x = Vx*t;
+                x = posx + Vx*t;
                 y = posy + Vy*t -(0.5*G*t*t);
 
                 if(sqrt(pow((target.getPosx() - x),2)+pow((target.getPosy() - y),2)) < impact_radio){ //si la distancia entre el proytectil y el destino es menos que el radio de impacto se cuenta como exitoso
@@ -67,6 +66,142 @@ std::vector<Shot *> Canyon::generate_offensive_shots(Canyon target) {
 
     print_results(aux);
     return aux;
+}
+std::vector<Shot *> Canyon::generate_defensive_shots(Canyon origin, Shot target, bool offensive_matters) {
+
+    std::vector<Shot *> shots; //para retornar
+
+    setDistance(origin);
+    setImpact_radio(); //calcula la distancia entre los cañones, y en base a eso el radio de impacto
+
+    if(offensive_matters){
+
+        int flag = 0;//para romper los ciclos cuando haye los 3 disparos
+
+        float x, y; //coordenas del disparo defensivo
+        int V0 = 0; //velocidad inicial del disparo defensivo
+        float Vx, Vy; //velocidades en x y y del disparo defensivo
+        int angle = 0; //angulo del disparo defensivo
+
+        float x_offensive, y_offensive; //coordenadas del disparo ofensivo
+        float Vx_offensive, Vy_offensive; //velocidades en x y y del disparo ofensivo
+
+        int t = 0;
+
+        Vx_offensive = target.getV0()*cos((target.getAngle())*pi/180);
+        Vy_offensive = target.getV0()*sin((target.getAngle())*pi/180);
+
+        for(V0 = 5; ; V0 += 5){  //se va aumentando la velocidad de 5 en 5
+
+            for(angle = 0; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
+
+                Vx = V0*cos((angle+90)*pi/180);
+                Vy = V0*sin((angle+90)*pi/180);
+
+                x = 0.0;
+                y = 0.0;
+                x_offensive = 0.0;
+                y_offensive = 0.0;
+
+                for(t = 0; ; t++){// se aumenta el tiempo de segundo en segundo
+
+                    x_offensive = origin.getPosx() + Vx_offensive*(t+2);
+                    y_offensive = origin.getPosy() + Vy_offensive*(t+2) -(0.5*G*(t+2)*(t+2)); //note que se tienen en cuenta los 2 segundos que tardo la informacion en llegar
+
+                    x = posx + Vx*t;
+                    y = posy + Vy*t -(0.5*G*t*t);
+
+                    if(sqrt(pow((x_offensive - x), 2)+pow((y_offensive - y), 2)) < impact_radio && sqrt(pow((origin.getPosx() - x), 2)+pow((origin.getPosy() - y), 2)) > impact_radio){
+                        //si la distancia entre el proytectil y el destino es menos que el radio de impacto Y la distanciancia entre el proyectil y el origen es mayor que el radio de impacto se cuenta como exitoso
+
+                        if(y<0)
+                            y = 0;
+
+                        shots.push_back(new Shot(x, y, V0, angle, t)); // si sale un disparo exitoso se añade al vector que de va a retornar (se toma le tiempo desde que se dispara*)
+
+                        flag ++;
+                        // V0 += 50; //se usaba para crear disparos que no fueran muy parecidos los unos a los otros, pero es probable que ya no la use
+                        break;
+                    }
+
+                    if(y < 0) break; // si se pasa del suelo
+
+                }
+
+                if(flag == 3) break;
+
+            }
+
+            if(flag == 3) break;
+
+        }
+
+    }
+
+    else{ //cuando el cañon ofensivo no importa, y el cañon defensivo mo comprueba si lo impacta o no
+
+        int flag = 0;//para romper los ciclos cuando haye los 3 disparos
+
+        float x, y; //coordenas del disparo defensivo
+        int V0 = 0; //velocidad inicial del disparo defensivo
+        float Vx, Vy; //velocidades en x y y del disparo defensivo
+        int angle = 0; //angulo del disparo defensivo
+
+        float x_offensive, y_offensive; //coordenadas del disparo ofensivo
+        float Vx_offensive, Vy_offensive; //velocidades en x y y del disparo ofensivo
+
+        int t = 0;
+
+        Vx_offensive = target.getV0()*cos((target.getAngle())*pi/180);
+        Vy_offensive = target.getV0()*sin((target.getAngle())*pi/180);
+
+        for(V0 = 5; ; V0 += 5){  //se va aumentando la velocidad de 5 en 5
+
+            for(angle = 0; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
+
+                Vx = V0*cos((angle+90)*pi/180);
+                Vy = V0*sin((angle+90)*pi/180);
+
+                x = 0.0;
+                y = 0.0;
+                x_offensive = 0.0;
+                y_offensive = 0.0;
+
+                for(t = 0; ; t++){// se aumenta el tiempo de segundo en segundo
+
+                    x_offensive = origin.getPosx() + Vx_offensive*(t+2);
+                    y_offensive = origin.getPosy() + Vy_offensive*(t+2) -(0.5*G*(t+2)*(t+2)); //note que se tienen en cuenta los 2 segundos que tardo la informacion en llegar
+
+                    x = posx + Vx*t;
+                    y = posy + Vy*t -(0.5*G*t*t);
+
+                    if(sqrt(pow((x_offensive - x),2)+pow((y_offensive - y), 2)) < impact_radio){ //si la distancia entre el proytectil y el destino es menos que el radio de impacto se cuenta como exitoso
+
+                        if(y<0)
+                            y = 0;
+
+                        shots.push_back(new Shot(x, y, V0, angle, t)); // si sale un disparo exitoso se añade al vector que de va a retornar (se toma le tiempo desde que se dispara*)
+
+                        flag ++;
+                        // V0 += 50; //se usaba para crear disparos que no fueran muy parecidos los unos a los otros, pero es probable que ya no la use
+                        break;
+                    }
+
+                    if(y < 0) break; // si se pasa del suelo
+
+                }
+
+                if(flag == 3) break;
+
+            }
+
+            if(flag == 3) break;
+
+        }
+    }
+
+    print_results(shots);
+    return shots;
 }
 
 void Canyon::print_results(std::vector<Shot *> shots) {

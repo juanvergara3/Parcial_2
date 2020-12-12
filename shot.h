@@ -7,7 +7,7 @@ class Shot{
 public: //variables
     float x, y; //posicion del disparo
     int V0; //velocidad inicial del disparo
-    float f_time; //tiempo final de impacto
+    int f_time; //tiempo final de impacto
     int angle; //angulo inicial del disparo
 
 private: //variables
@@ -19,14 +19,14 @@ public: //methods
 
     int getAngle() const;
     int getV0() const;
-    float getF_time() const;
+    int getF_time() const;
     float getX() const;
     float getY() const;
 
     void setX(float value);
     void setY(float value);
     void setAngle(int value);
-    void setF_time(float value);
+    void setF_time(int value);
     void setV0(int value);
 
 private: //methods
