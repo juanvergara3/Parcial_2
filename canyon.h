@@ -25,6 +25,11 @@ public: //methods
     std::vector <Shot *> generate_defensive_shots(Canyon origin, Shot target, bool destroy); //puntos 3 y 4 (target es el disparo que se quiere destruir y origin es el cañon que los disparó)
     std::vector<Shot *> generate_counter_offensive_shots(Canyon target_canyon, Shot target_shot, Shot mine); //punto 5 (target_canyon es el cañon que se quiere destruir, target_shot es el disparo que hay que destruir, y mine es el disparo que hayq ue proteger)
 
+    bool confirm_impact(Shot offense); //confirma que el diaparo impacta su destino (el cañon que realiza este calculo es el destino (this) )
+
+    void print_results( std::vector <Shot *> shots);
+    void print_results(Shot* shot);
+
     float getPosx() const;
     float getPosy() const;
 
