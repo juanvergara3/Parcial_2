@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 #include <windows.h>
+#include<bits/stdc++.h>
 
 #include "canyon.h"
 
@@ -153,7 +154,7 @@ int main() {
                         if(inputs2 == "Y" || inputs2 == "y")
                             defensive.generate_defensive_shots(ofensive, *s, true, true);
                         else if(inputs2 == "N" || inputs2 == "n")
-                            defensive.generate_defensive_shots(ofensive, *s, true, true);
+                            defensive.generate_defensive_shots(ofensive, *s, false, true);
                     }
                     else if(defensive.confirm_impact(ofensive, *s)) //why is this printing tho ***
                         std::cout<<"El disparo no impacta"<<std::endl;
@@ -208,7 +209,7 @@ int main() {
                         if(inputs2 == "Y" || inputs2 == "y")
                             defensive.generate_defensive_shots(ofensive, *s, true, true);
                         else if(inputs2 == "N" || inputs2 == "n")
-                            defensive.generate_defensive_shots(ofensive, *s, true, true);
+                            defensive.generate_defensive_shots(ofensive, *s, false, true);
                     }
                     else
                         std::cout<<"El disparo no impacta"<<std::endl;
@@ -224,6 +225,97 @@ int main() {
             break;
         }
         case 3:{ //Generar disparos contra-ofensivos
+
+            sub_loop = true;
+            while(sub_loop){
+                std::cout<<"Ingrese \"GG\" para generar tanto el disparo ofensivo como el defensivo, \"GM\" para solo generar el ofensivo e ingresar el defensivo, "
+                           "\"MG\" para solo generar el defensivo e ingresar el ofensivo, \"MM\" para ingresar tanto el disparo ofensivo como el defensivo,  o -1 para cancelar: "; std::cin>>inputs1;
+
+               transform(inputs1.begin(), inputs1.end(), inputs1.begin(), ::toupper);
+
+                if(inputs1 == "GG" || inputs1 == "GM" || inputs1 == "MG" || inputs1 == "MM") break;
+
+                else if (inputs1 == "-1") sub_loop = false;
+
+                else {
+                    system("CLS");
+                    std::cout<<"Opcion invalida"<<std::endl;
+                }
+            }
+
+            if(sub_loop == true){
+
+                if( inputs1 == "GG"){
+
+                    Shot *of = new Shot(*ofensive.generate_offensive_shots(defensive, false)[0]);
+                    Shot *def = new Shot(*defensive.generate_defensive_shots(ofensive, *of, false, false)[0]);
+
+                    ofensive.generate_counter_offensive_shots(defensive, *def, *of);
+
+                    delete  of;
+                    delete  def;
+                }
+                else if (inputs1 == "GM"){
+
+                    Shot *of = new Shot(*ofensive.generate_offensive_shots(defensive, false)[0]);
+
+                    while(true){ // angulo
+                        std::cout<<"Ingresa el angulo del disparo [0 - 90): ";
+                        std::cin>>tempx;
+
+                        while(std::cin.fail()) { //validacion de entrada
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                            system("CLS");
+                            std::cout << "Entrada invalida"<<std::endl;
+                            std::cout<<"Ingresa el angulo del disparo [0 - 90): "; std::cin>>tempx;
+                        }
+
+                        if(tempx >= 0 && tempx < 90) break;
+
+                        else {
+                            system("CLS");
+                            std::cout<<"Fuera de rango"<<std::endl;
+                        }
+                    }
+                    while(true){ // V0
+                        std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): ";
+                        std::cin>>tempy;
+
+                        while(std::cin.fail()) { //validacion de entrada
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                            system("CLS");
+                            std::cout << "Entrada invalida"<<std::endl;
+                            std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): "; std::cin>>tempy;
+                        }
+
+                        if(tempy>0) break;
+
+                        else {
+                            system("CLS");
+                            std::cout<<"Fuera de rango"<<std::endl;
+                        }
+                    }
+
+                    Shot *def = new Shot(tempy, tempx);
+
+                    if(ofensive.confirm_impact(ofensive, *of, defensive, *def)){
+
+                        ofensive.generate_counter_offensive_shots(defensive, *def, *of);
+                    }
+                    else
+                        std::cout<<"El disparo no impacta"<<std::endl;
+
+                    delete  of;
+                    delete  def;
+                }
+
+                std::cout<<"Presiona ESC para volver"<<std::endl;
+                while(true)
+                    if (GetAsyncKeyState(VK_ESCAPE))
+                        break;
+            }
 
             break;
         }

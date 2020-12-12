@@ -17,11 +17,11 @@ std::vector<Shot *> Canyon::generate_offensive_shots(Canyon target, bool print) 
     float Vx, Vy; //velocidades en x y y del proyectil
     int V0 = 0; //velocidad inicial del proyectil
     int t = 0;
-    int angle = 0; //angulo del proyectil
+    int angle = 1; //angulo del proyectil
 
     for(V0 = 5; ; V0 += 5){ //se va aumentando la velocidad de 5 en 5
 
-        for(angle = 0; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
+        for(angle = 1; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
 
             if(posx < target.getPosx()){ //si el cañon esta ubicado antes del objetivo
                 Vx = V0*cos(angle*pi/180);
@@ -81,7 +81,7 @@ std::vector<Shot *> Canyon::generate_defensive_shots(Canyon origin, Shot target,
         float x, y; //coordenas del disparo defensivo
         int V0 = 0; //velocidad inicial del disparo defensivo
         float Vx, Vy; //velocidades en x y y del disparo defensivo
-        int angle = 0; //angulo del disparo defensivo
+        int angle = 1; //angulo del disparo defensivo
 
         float x_offensive, y_offensive; //coordenadas del disparo ofensivo
         float Vx_offensive, Vy_offensive; //velocidades en x y y del disparo ofensivo
@@ -93,7 +93,7 @@ std::vector<Shot *> Canyon::generate_defensive_shots(Canyon origin, Shot target,
 
         for(V0 = 5; ; V0 += 5){  //se va aumentando la velocidad de 5 en 5
 
-            for(angle = 0; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
+            for(angle = 1; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
 
                 Vx = V0*cos((angle+90)*pi/180);
                 Vy = V0*sin((angle+90)*pi/180);
@@ -147,7 +147,7 @@ std::vector<Shot *> Canyon::generate_defensive_shots(Canyon origin, Shot target,
         float x, y; //coordenas del disparo defensivo
         int V0 = 0; //velocidad inicial del disparo defensivo
         float Vx, Vy; //velocidades en x y y del disparo defensivo
-        int angle = 0; //angulo del disparo defensivo
+        int angle = 1; //angulo del disparo defensivo
 
         float x_offensive, y_offensive; //coordenadas del disparo ofensivo
         float Vx_offensive, Vy_offensive; //velocidades en x y y del disparo ofensivo
@@ -159,7 +159,7 @@ std::vector<Shot *> Canyon::generate_defensive_shots(Canyon origin, Shot target,
 
         for(V0 = 5; ; V0 += 5){  //se va aumentando la velocidad de 5 en 5
 
-            for(angle = 0; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
+            for(angle = 1; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
 
                 Vx = V0*cos((angle+90)*pi/180);
                 Vy = V0*sin((angle+90)*pi/180);
@@ -265,7 +265,7 @@ std::vector<Shot *> Canyon::generate_counter_offensive_shots(Canyon target_canyo
                 x = posx + Vx*t;
                 y = posy + Vy*t -(0.5*G*t*t);
 
-                if(sqrt(pow((x_offensive - x),2)+pow((y_offensive - y), 2)) < impact_radio && sqrt(pow((x_mine - x),2)+pow((y_mine - y), 2)) > impact_radio){ //0,005d careful :thinking:
+                if(sqrt(pow((x_offensive - x),2)+pow((y_offensive - y), 2)) < 0.005*distance && sqrt(pow((x_mine - x),2)+pow((y_mine - y), 2)) > 0.005*distance){
                     // si destruye el proyectil que queremos destruir pero no destruye el que disparamos originalmente
 
                     if(y<0)
@@ -303,12 +303,12 @@ bool Canyon::confirm_impact(Canyon origin, Shot ofense) {
     int t = 0;
 
 //    if(origin.getPosx() > posx){ //si el origen esta ubicado antes del objetivo
-//        Vx = V0*cos(offense.getAngle()*pi/180);
-//        Vy = V0*sin(offense.getAngle()*pi/180);
+//        Vx = V0*cos(ofense.getAngle()*pi/180);
+//        Vy = V0*sin(ofense.getAngle()*pi/180);
 //    }
 //    else if (origin.getPosx() < posx){ //si el origen esta ubicado despues del objetivo
-//        Vx = V0*cos((offense.getAngle()+90)*pi/180);
-//        Vy = V0*sin((offense.getAngle()+90)*pi/180);
+//        Vx = V0*cos((ofense.getAngle()+90)*pi/180);
+//        Vy = V0*sin((ofense.getAngle()+90)*pi/180);
 //    }
 
     Vx = V0*cos(ofense.getAngle()*pi/180);
@@ -329,6 +329,43 @@ bool Canyon::confirm_impact(Canyon origin, Shot ofense) {
             break;
 
     }
+    return false;
+}
+bool Canyon::confirm_impact(Canyon ofensive, Shot of, Canyon defensive, Shot def) {
+
+    float x_defensive, y_defensive; //coordenas del disparo defensivo
+    float Vx_defensive, Vy_defensive; //velocidades en x y y del disparo defensivo
+
+    float x_offensive, y_offensive; //coordenadas del disparo ofensivo
+    float Vx_offensive, Vy_offensive; //velocidades en x y y del disparo ofensivo
+
+    Vx_defensive = def.getV0()*cos((def.getAngle()+90)*pi/180);
+    Vy_defensive = def.getV0()*sin((def.getAngle()+90)*pi/180);
+
+    Vx_offensive = of.getV0()*cos((of.getAngle())*pi/180);
+    Vy_offensive = of.getV0()*sin((of.getAngle())*pi/180);
+
+    ofensive.setDistance(defensive);
+    ofensive.setImpact_radio();
+    defensive.setDistance(ofensive);
+    defensive.setImpact_radio();
+
+    for(int t = 0; ; t++){// se aumenta el tiempo de segundo en segundo
+
+        x_offensive = ofensive.getPosx() + Vx_offensive*(t+2);
+        y_offensive = ofensive.getPosy() + Vy_offensive*(t+2) -(0.5*G*(t+2)*(t+2)); //note que se tienen en cuenta los 2 segundos que tardo la informacion en llegar
+
+        x_defensive = defensive.getPosx() + Vx_defensive*t;
+        y_defensive = defensive.getPosy() + Vy_defensive*t -(0.5*G*t*t);
+
+        if(sqrt(pow((x_offensive - x_defensive), 2)+pow((y_offensive - y_defensive), 2)) < defensive.getImpact_radio()) //si la distancia entre el proytectil y el destino es menos que el radio de impacto se cuenta como exitoso
+            return true;
+
+
+        if(y_defensive < -1*(defensive.getImpact_radio()*2) || y_offensive < -1*(ofensive.getImpact_radio()*2)) break; // si se pasa del suelo
+
+    }
+
     return false;
 }
 
