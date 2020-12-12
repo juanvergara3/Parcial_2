@@ -104,10 +104,10 @@ int main() {
             if(sub_loop == true){
 
                 if( inputs1 == "d" || inputs1 == "D")
-                    defensive.generate_offensive_shots(ofensive);
+                    defensive.generate_offensive_shots(ofensive, true);
 
                 else if (inputs1 == "o" || inputs1 == "O")
-                    ofensive.generate_offensive_shots(defensive);
+                    ofensive.generate_offensive_shots(defensive, true);
 
                 std::cout<<"Presiona ESC para volver"<<std::endl;
                 while(true)
@@ -146,14 +146,14 @@ int main() {
 
                 if( inputs1 == "g" || inputs1 == "G"){
 
-                    Shot *s = new Shot(*ofensive.generate_offensive_shots(defensive)[0]);
+                    Shot *s = new Shot(*ofensive.generate_offensive_shots(defensive, false)[0]);
 
                     if(defensive.confirm_impact(ofensive, *s)){
 
                         if(inputs2 == "Y" || inputs2 == "y")
-                            defensive.generate_defensive_shots(ofensive, *s, true);
+                            defensive.generate_defensive_shots(ofensive, *s, true, true);
                         else if(inputs2 == "N" || inputs2 == "n")
-                            defensive.generate_defensive_shots(ofensive, *s, true);
+                            defensive.generate_defensive_shots(ofensive, *s, true, true);
                     }
                     else if(defensive.confirm_impact(ofensive, *s)) //why is this printing tho ***
                         std::cout<<"El disparo no impacta"<<std::endl;
@@ -206,9 +206,9 @@ int main() {
                     if(defensive.confirm_impact(ofensive, *s)){
 
                         if(inputs2 == "Y" || inputs2 == "y")
-                            defensive.generate_defensive_shots(ofensive, *s, true);
+                            defensive.generate_defensive_shots(ofensive, *s, true, true);
                         else if(inputs2 == "N" || inputs2 == "n")
-                            defensive.generate_defensive_shots(ofensive, *s, true);
+                            defensive.generate_defensive_shots(ofensive, *s, true, true);
                     }
                     else
                         std::cout<<"El disparo no impacta"<<std::endl;
