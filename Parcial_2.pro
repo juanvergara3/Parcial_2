@@ -4,4 +4,10 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        canyon.cpp \
+        main.cpp \
+        shot.cpp
+
+HEADERS += \
+    canyon.h \
+    shot.h
