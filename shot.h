@@ -14,6 +14,7 @@ private: //variables
 
 public: //methods
     Shot(float posx, float posy, int velocity, int angle_, int final_time);
+    Shot(int velocity, int angle_);
     Shot();
     ~Shot();
 

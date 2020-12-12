@@ -11,8 +11,12 @@ Shot::Shot(float posx, float posy, int velocity, int angle_, int final_time) {
     x = posx;
     y = posy;
     V0 = velocity;
-   angle = angle_;
-   f_time = final_time;
+    angle = angle_;
+    f_time = final_time;
+}
+Shot::Shot(int velocity, int angle_) {
+    V0 = velocity;
+    angle = angle_;
 }
 Shot::~Shot() {
 
