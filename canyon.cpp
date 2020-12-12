@@ -261,7 +261,7 @@ std::vector<Shot *> Canyon::generate_counter_offensive_shots(Canyon target_canyo
                 x = posx + Vx*t;
                 y = posy + Vy*t -(0.5*G*t*t);
 
-                if(sqrt(pow((x_offensive - x),2)+pow((y_offensive - y), 2)) < impact_radio && sqrt(pow((x_mine - x),2)+pow((y_mine - y), 2)) > impact_radio){
+                if(sqrt(pow((x_offensive - x),2)+pow((y_offensive - y), 2)) < impact_radio && sqrt(pow((x_mine - x),2)+pow((y_mine - y), 2)) > impact_radio){ //0,005d careful :thinking:
                     // si destruye el proyectil que queremos destruir pero no destruye el que disparamos originalmente
 
                     if(y<0)
