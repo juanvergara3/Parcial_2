@@ -207,69 +207,66 @@ std::vector<Shot *> Canyon::generate_defensive_shots(Canyon origin, Shot target,
         print_results(shots);
     return shots;
 }
-std::vector<Shot *> Canyon::generate_counter_offensive_shots(Canyon target_canyon, Shot target_shot, Shot mine) {
+std::vector<Shot *> Canyon::generate_counter_offensive_shots(Canyon defensive_canyon, Shot defensive_shot, Shot offensive_shot) {
 
     std::vector<Shot *> shots; //para retornar
 
     //calcula la distancia entre los cañones, y en base a eso el radio de impacto
-    setDistance(target_canyon);
-    target_canyon.setDistance(*this);
+    setDistance(defensive_canyon);
+    defensive_canyon.setDistance(*this);
     setImpact_radio();
-    target_canyon.setImpact_radio();
+    defensive_canyon.setImpact_radio();
 
     int flag = 0;//para romper los ciclos cuando haye los 3 disparos
 
     float x, y; //coordenas del disparo que estamos generando
-    int V0 = 0; //velocidad inicial del disparo que estamos generando
+    int V0; //velocidad inicial del disparo que estamos generando
     float Vx, Vy; //velocidades en x y y del disparo que estamos generando
-    int angle = 0; //angulo del disparo que estamos generando
+    int angle = 1; //angulo del disparo que estamos generando
 
-    float x_offensive, y_offensive; //coordenadas del disparo que va a destruir mi disparo
-    float Vx_offensive, Vy_offensive; //velocidades en x y y del disparo que va a destruir mi disparo
+    float x_defensive, y_defensive; //coordenadas del disparo que va a destruir mi disparo
+    float Vx_defensive, Vy_defensive; //velocidades en x y y del disparo que va a destruir mi disparo
 
-    float x_mine, y_mine;  //coordenadas del disparo que dispare inicialmente
-    float Vx_mine, Vy_mine; //velocidades en x y y del disparo que dispare inicialmente
+    float x_offensive, y_offensive;  //coordenadas del disparo que dispare inicialmente
+    float Vx_offensive, Vy_offensive; //velocidades en x y y del disparo que dispare inicialmente
 
     int t = 0;
     int d1 = 3; //delay 1
     int d2 = 1; //delay 2
 
-    Vx_offensive = target_shot.getV0()*cos((target_shot.getAngle()+90)*pi/180);
-    Vy_offensive = target_shot.getV0()*sin((target_shot.getAngle()+90)*pi/180);
+    Vx_defensive = defensive_shot.getV0()*cos((defensive_shot.getAngle()+90)*pi/180);
+    Vy_defensive = defensive_shot.getV0()*sin((defensive_shot.getAngle()+90)*pi/180);
 
-    Vx_mine = mine.getV0()*cos((mine.getAngle())*pi/180);
-    Vy_mine = mine.getV0()*sin((mine.getAngle())*pi/180);
+    Vx_offensive = offensive_shot.getV0()*cos((offensive_shot.getAngle())*pi/180);
+    Vy_offensive = offensive_shot.getV0()*sin((offensive_shot.getAngle())*pi/180);
 
-    for(V0 = 5; ; V0 += 5){  //se va aumentando la velocidad de 5 en 5
+    for(V0 = 5; ; V0 += 1) {  //se va aumentando la velocidad de 5 en 5
 
-        for(angle = 0; angle < 90; angle++){ // se aumenta el  angulo de 1 en 1 hasta que sea 90
+        for(angle = 1; angle < 90; angle++) { // se aumenta el  angulo de 1 en 1 hasta que sea 90
 
             Vx = V0*cos((angle)*pi/180);
             Vy = V0*sin((angle)*pi/180);
 
             x = 0.0;
             y = 0.0;
+            x_defensive = 0.0;
+            y_defensive = 0.0;
             x_offensive = 0.0;
             y_offensive = 0.0;
-            x_mine = 0.0;
-            y_mine = 0.0;
 
             for(t = 0; ; t++){// se aumenta el tiempo de segundo en segundo
 
-                x_mine = posx + Vx_mine*(t+d1);
-                y_mine = posy + Vy_mine*(t+d1) - (0.5*G*(t+d1)*(t+d1));  // *** no estoy seguro de los delays ***
+                x_offensive = posx + Vx_offensive*(t+d1);
+                y_offensive = posy + Vy_offensive*(t+d1) - (0.5*G*(t+d1)*(t+d1));  // *** no estoy seguro de los delays ***
 
-                x_offensive = target_canyon.getPosx() + Vx_offensive*(t+d2);
-                y_offensive = target_canyon.getPosy() + Vy_offensive*(t+d2) -(0.5*G*(t+d2)*(t+d2));
+                x_defensive = defensive_canyon.getPosx() + Vx_defensive*(t+d2);
+                y_defensive = defensive_canyon.getPosy() + Vy_defensive*(t+d2) - (0.5*G*(t+d2)*(t+d2));
 
                 x = posx + Vx*t;
-                y = posy + Vy*t -(0.5*G*t*t);
+                y = posy + Vy*t - (0.5*G*t*t);
 
-                if(sqrt(pow((x_offensive - x),2)+pow((y_offensive - y), 2)) < 0.005*distance && sqrt(pow((x_mine - x),2)+pow((y_mine - y), 2)) > 0.005*distance){
+                if(sqrt(pow((x_defensive - x),2)+pow((y_defensive - y), 2)) <= 0.005*distance && sqrt(pow((x_offensive - x),2)+pow((y_offensive - y), 2)) > 0.005*distance){
                     // si destruye el proyectil que queremos destruir pero no destruye el que disparamos originalmente
-
-                    if(y<0)
-                        y = 0;
 
                     shots.push_back(new Shot(x, y, V0, angle, t)); // si sale un disparo exitoso se añade al vector que de va a retornar (se toma le tiempo desde que se dispara*)
 
@@ -278,7 +275,9 @@ std::vector<Shot *> Canyon::generate_counter_offensive_shots(Canyon target_canyo
                     break;
                 }
 
-                if(y < 0) break; // si se pasa del suelo
+                if(sqrt(pow((x_offensive - x_defensive), 2)+pow((y_offensive - y_defensive), 2)) < defensive_canyon.impact_radio) break; //si el proyectil defensivo impacta con el ofensivo
+
+                if(flag == 3) break;
 
             }
 
