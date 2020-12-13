@@ -305,17 +305,176 @@ int main() {
                         ofensive.generate_counter_offensive_shots(defensive, *def, *of);
                     }
                     else
-                        std::cout<<"El disparo no impacta"<<std::endl;
+                        std::cout<<"El disparo ingresado no impacta"<<std::endl;
 
                     delete  of;
                     delete  def;
                 }
+                else if (inputs1 == "MG"){ //pendiente
 
-                std::cout<<"Presiona ESC para volver"<<std::endl;
-                while(true)
-                    if (GetAsyncKeyState(VK_ESCAPE))
-                        break;
+                    while(true){ // angulo
+                        std::cout<<"Ingresa el angulo del disparo [0 - 90): ";
+                        std::cin>>tempx;
+
+                        while(std::cin.fail()) { //validacion de entrada
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                            system("CLS");
+                            std::cout << "Entrada invalida"<<std::endl;
+                            std::cout<<"Ingresa el angulo del disparo [0 - 90): "; std::cin>>tempx;
+                        }
+
+                        if(tempx >= 0 && tempx < 90) break;
+
+                        else {
+                            system("CLS");
+                            std::cout<<"Fuera de rango"<<std::endl;
+                        }
+                    }
+                    while(true){ // V0
+                        std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): ";
+                        std::cin>>tempy;
+
+                        while(std::cin.fail()) { //validacion de entrada
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                            system("CLS");
+                            std::cout << "Entrada invalida"<<std::endl;
+                            std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): "; std::cin>>tempy;
+                        }
+
+                        if(tempy>0) break;
+
+                        else {
+                            system("CLS");
+                            std::cout<<"Fuera de rango"<<std::endl;
+                        }
+                    }
+
+                    Shot *of = new Shot(tempy, tempx);
+
+
+                    if(defensive.confirm_impact(ofensive, *of)){
+
+                        Shot *def = new Shot(*defensive.generate_defensive_shots(ofensive, *of, false, false)[0]);
+
+                        ofensive.generate_counter_offensive_shots(defensive, *def, *of);
+
+                        delete  def;
+                    }
+                    else
+                        std::cout<<"El disparo ingresado no impacta"<<std::endl;
+
+                    delete  of;
+                }
+                else if (inputs1 == "MM"){ //pendiente
+
+                    while(true){ // angulo primer disparo
+                        std::cout<<"Ingresa el angulo del disparo [0 - 90): ";
+                        std::cin>>tempx;
+
+                        while(std::cin.fail()) { //validacion de entrada
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                            system("CLS");
+                            std::cout << "Entrada invalida"<<std::endl;
+                            std::cout<<"Ingresa el angulo del disparo [0 - 90): "; std::cin>>tempx;
+                        }
+
+                        if(tempx >= 0 && tempx < 90) break;
+
+                        else {
+                            system("CLS");
+                            std::cout<<"Fuera de rango"<<std::endl;
+                        }
+                    }
+                    while(true){ // V0 primer disparo
+                        std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): ";
+                        std::cin>>tempy;
+
+                        while(std::cin.fail()) { //validacion de entrada
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                            system("CLS");
+                            std::cout << "Entrada invalida"<<std::endl;
+                            std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): "; std::cin>>tempy;
+                        }
+
+                        if(tempy>0) break;
+
+                        else {
+                            system("CLS");
+                            std::cout<<"Fuera de rango"<<std::endl;
+                        }
+                    }
+
+                    Shot *of = new Shot(tempy, tempx);
+
+                    if(defensive.confirm_impact(ofensive, *of)){
+
+                        while(true){ // angulo segundo disparo
+                            std::cout<<"Ingresa el angulo del disparo [0 - 90): ";
+                            std::cin>>tempx;
+
+                            while(std::cin.fail()) { //validacion de entrada
+                                std::cin.clear();
+                                std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                                system("CLS");
+                                std::cout << "Entrada invalida"<<std::endl;
+                                std::cout<<"Ingresa el angulo del disparo [0 - 90): "; std::cin>>tempx;
+                            }
+
+                            if(tempx >= 0 && tempx < 90) break;
+
+                            else {
+                                system("CLS");
+                                std::cout<<"Fuera de rango"<<std::endl;
+                            }
+                        }
+                        while(true){ // V0 segundo disparo
+                            std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): ";
+                            std::cin>>tempy;
+
+                            while(std::cin.fail()) { //validacion de entrada
+                                std::cin.clear();
+                                std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                                system("CLS");
+                                std::cout << "Entrada invalida"<<std::endl;
+                                std::cout<<"Ingresa la velocidad inicial del disparo ( > 0): "; std::cin>>tempy;
+                            }
+
+                            if(tempy>0) break;
+
+                            else {
+                                system("CLS");
+                                std::cout<<"Fuera de rango"<<std::endl;
+                            }
+                        }
+
+                        Shot *def = new Shot(tempy, tempx);
+
+                        if(ofensive.confirm_impact(ofensive, *of, defensive, *def)){
+
+                            ofensive.generate_counter_offensive_shots(defensive, *def, *of);
+
+                        }
+                        else
+                            std::cout<<"El disparo ingresado no impacta"<<std::endl;
+
+                        delete def;
+                    }
+                    else
+                        std::cout<<"El disparo ingresado no impacta"<<std::endl;
+
+                    delete of;
+                }
+
             }
+
+            std::cout<<"Presiona ESC para volver"<<std::endl;
+            while(true)
+                if (GetAsyncKeyState(VK_ESCAPE))
+                    break;
 
             break;
         }
